@@ -180,11 +180,17 @@
 )
 
 (define-read-only (get-contribution-history (campaign-id uint) (contributor principal) (limit uint))
-    (ok (map 
-        (lambda (index) 
-            (get-contribution-transaction campaign-id contributor index)
-        )
-        (list u0 u1 u2 u3 u4 u5 u6 u7 u8 u9) ;; Last 10 transactions
+    (ok (list 
+        (get-contribution-transaction campaign-id contributor u1)
+        (get-contribution-transaction campaign-id contributor u2)
+        (get-contribution-transaction campaign-id contributor u3)
+        (get-contribution-transaction campaign-id contributor u4)
+        (get-contribution-transaction campaign-id contributor u5)
+        (get-contribution-transaction campaign-id contributor u6)
+        (get-contribution-transaction campaign-id contributor u7)
+        (get-contribution-transaction campaign-id contributor u8)
+        (get-contribution-transaction campaign-id contributor u9)
+        (get-contribution-transaction campaign-id contributor u10)
     ))
 )
 
@@ -225,14 +231,14 @@
                         (merge details {
                             total-amount: new-total,
                             contribution-count: new-count,
-                            last-contribution: block-height,
+                            last-contribution: stacks-block-height,
                             reward-tier: tier
                         })
                     )
                     ;; Store transaction
                     (map-set contribution-transactions
                         { campaign-id: campaign-id, contributor: contributor, tx-index: new-count }
-                        { amount: amount, timestamp: block-height, block: block-height }
+                        { amount: amount, timestamp: stacks-block-height, block: stacks-block-height }
                     )
                 )
             (begin
@@ -242,8 +248,8 @@
                     {
                         total-amount: amount,
                         contribution-count: u1,
-                        first-contribution: block-height,
-                        last-contribution: block-height,
+                        first-contribution: stacks-block-height,
+                        last-contribution: stacks-block-height,
                         refunded: false,
                         reward-tier: (calculate-tier amount campaign-id)
                     }
@@ -251,7 +257,7 @@
                 ;; Store first transaction
                 (map-set contribution-transactions
                     { campaign-id: campaign-id, contributor: contributor, tx-index: u1 }
-                    { amount: amount, timestamp: block-height, block: block-height }
+                    { amount: amount, timestamp: stacks-block-height, block: stacks-block-height }
                 )
                 ;; Increment platform backers for new contributor
                 (var-set total-platform-backers (+ (var-get total-platform-backers) u1))
@@ -303,7 +309,7 @@
             { campaign-id: campaign-id, contributor: contributor }
             {
                 amount: amount,
-                claimed-at: block-height,
+                claimed-at: stacks-block-height,
                 processed: true
             }
         )

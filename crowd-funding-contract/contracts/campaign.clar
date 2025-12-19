@@ -67,14 +67,14 @@
     (let ((campaign (unwrap! (map-get? campaigns campaign-id) false)))
         (and 
             (is-eq (get status campaign) STATUS-ACTIVE)
-            (< block-height (get deadline campaign))
+            (< stacks-block-height (get deadline campaign))
         )
     )
 )
 
 (define-private (is-campaign-ended (campaign-id uint))
     (let ((campaign (unwrap! (map-get? campaigns campaign-id) false)))
-        (>= block-height (get deadline campaign))
+        (>= stacks-block-height (get deadline campaign))
     )
 )
 
@@ -150,9 +150,9 @@
 (define-read-only (get-time-remaining (campaign-id uint))
     (match (map-get? campaigns campaign-id)
         campaign
-            (if (>= block-height (get deadline campaign))
+            (if (>= stacks-block-height (get deadline campaign))
                 (ok u0)
-                (ok (- (get deadline campaign) block-height))
+                (ok (- (get deadline campaign) stacks-block-height))
             )
         ERR-CAMPAIGN-NOT-FOUND
     )
@@ -172,7 +172,7 @@
 )
     (let (
         (campaign-id (+ (var-get campaign-nonce) u1))
-        (deadline (+ block-height duration))
+        (deadline (+ stacks-block-height duration))
     )
         ;; Validate inputs
         (asserts! (> goal u0) ERR-INVALID-GOAL)
@@ -188,7 +188,7 @@
             raised: u0,
             deadline: deadline,
             status: STATUS-ACTIVE,
-            created-at: block-height,
+            created-at: stacks-block-height,
             claimed: false,
             milestone-enabled: milestone-enabled
         })
@@ -230,13 +230,13 @@
                     { campaign-id: campaign-id, contributor: tx-sender }
                     { 
                         amount: (+ (get amount contrib) amount),
-                        timestamp: block-height
+                        timestamp: stacks-block-height
                     }
                 )
             (begin
                 (map-set contributions 
                     { campaign-id: campaign-id, contributor: tx-sender }
-                    { amount: amount, timestamp: block-height }
+                    { amount: amount, timestamp: stacks-block-height }
                 )
                 ;; Increment contributor count for new contributors
                 (map-set total-contributions campaign-id 

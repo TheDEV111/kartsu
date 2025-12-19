@@ -116,7 +116,7 @@
 
 (define-private (has-voting-ended (campaign-id uint) (milestone-id uint))
     (match (map-get? milestone-votes { campaign-id: campaign-id, milestone-id: milestone-id })
-        vote-data (>= block-height (get voting-end vote-data))
+        vote-data (>= stacks-block-height (get voting-end vote-data))
         true
     )
 )
@@ -260,8 +260,8 @@
                 description: description,
                 amount: amount,
                 status: STATUS-PENDING,
-                created-at: block-height,
-                voting-deadline: (+ block-height voting-duration),
+                created-at: stacks-block-height,
+                voting-deadline: (+ stacks-block-height voting-duration),
                 released-at: none,
                 creator: tx-sender
             }
@@ -296,8 +296,8 @@
                 no-votes: u0,
                 total-voters: u0,
                 total-voting-power: u0,
-                voting-start: block-height,
-                voting-end: (+ block-height voting-duration),
+                voting-start: stacks-block-height,
+                voting-end: (+ stacks-block-height voting-duration),
                 approved: false
             }
         )
@@ -307,7 +307,7 @@
             { campaign-id: campaign-id, milestone-id: milestone-id }
             (merge milestone { 
                 status: STATUS-VOTING,
-                voting-deadline: (+ block-height voting-duration)
+                voting-deadline: (+ stacks-block-height voting-duration)
             })
         )
         
@@ -339,7 +339,7 @@
             {
                 vote: vote,
                 voting-power: voting-power,
-                voted-at: block-height
+                voted-at: stacks-block-height
             }
         )
         
@@ -421,7 +421,7 @@
             { campaign-id: campaign-id, milestone-id: milestone-id }
             {
                 proof-url: proof-url,
-                submitted-at: block-height,
+                submitted-at: stacks-block-height,
                 notes: notes
             }
         )
@@ -452,7 +452,7 @@
             { campaign-id: campaign-id, milestone-id: milestone-id }
             (merge milestone { 
                 status: STATUS-RELEASED,
-                released-at: (some block-height)
+                released-at: (some stacks-block-height)
             })
         )
         
