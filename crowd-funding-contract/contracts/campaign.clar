@@ -86,12 +86,15 @@
 
 (define-private (update-campaign-status (campaign-id uint))
     (let (
-        (campaign (unwrap! (map-get? campaigns campaign-id) ERR-CAMPAIGN-NOT-FOUND))
+        (campaign (unwrap! (map-get? campaigns campaign-id) false))
     )
         (if (and (is-campaign-ended campaign-id) (is-eq (get status campaign) STATUS-ACTIVE))
-            (if (has-goal-met campaign-id)
-                (map-set campaigns campaign-id (merge campaign { status: STATUS-SUCCESSFUL }))
-                (map-set campaigns campaign-id (merge campaign { status: STATUS-FAILED }))
+            (begin
+                (if (has-goal-met campaign-id)
+                    (map-set campaigns campaign-id (merge campaign { status: STATUS-SUCCESSFUL }))
+                    (map-set campaigns campaign-id (merge campaign { status: STATUS-FAILED }))
+                )
+                true
             )
             true
         )
@@ -269,7 +272,7 @@
         (asserts! (not (is-eq (get status campaign) STATUS-CANCELLED)) ERR-CAMPAIGN-CANCELLED)
         
         ;; Update status if needed
-        (try! (update-campaign-status campaign-id))
+        (update-campaign-status campaign-id)
         
         ;; Transfer funds to creator (only if not milestone-enabled)
         (if (not (get milestone-enabled campaign))
@@ -296,7 +299,7 @@
         (asserts! (> amount u0) ERR-INVALID-AMOUNT)
         
         ;; Update status if needed
-        (try! (update-campaign-status campaign-id))
+        (update-campaign-status campaign-id)
         
         ;; Transfer refund to contributor
         (try! (as-contract (stx-transfer? amount tx-sender tx-sender)))
