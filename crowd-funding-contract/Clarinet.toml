@@ -1,13 +1,21 @@
 [project]
 name = "crowd-funding-contract"
-description = ""
+description = "Blockchain-based crowdfunding platform with milestone-based fund releases"
 authors = []
 telemetry = true
 cache_dir = "./.cache"
 
-# [contracts.counter]
-# path = "contracts/counter.clar"
-# epoch = "latest"
+[contracts.campaign]
+path = "contracts/campaign.clar"
+epoch = "3.0"
+
+[contracts.contribution-tracker]
+path = "contracts/contribution-tracker.clar"
+epoch = "3.0"
+
+[contracts.milestone-manager]
+path = "contracts/milestone-manager.clar"
+epoch = "3.0"
 
 [repl.analysis]
 passes = ["check_checker"]
